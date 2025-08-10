@@ -1,0 +1,359 @@
+views:
+  - title: ☀️Weather
+    path: weather
+    type: sections
+    max_columns: 4
+    header:
+      card:
+        type: markdown
+        content: Current Weather
+        text_only: true
+    sections:
+      - type: grid
+        columns: 4
+        header:
+          type: markdown
+          content: 🌫️ Air & Pollen
+        cards:
+          - type: conditional
+            conditions:
+              - entity: sensor.usa_air_quality_index
+                condition: numeric_state
+                above: 50
+            card:
+              type: custom:bubble-card
+              card_type: button
+              button_type: state
+              entity: sensor.usa_air_quality_index
+              name: AQI
+              icon: mdi:weather-fog
+              min_value: 0
+              max_value: 703
+              height: 90
+              sub_button:
+                - entity: sensor.kleenex_pollen_radar_home_trees_level
+                  name: Trees
+                  icon: mdi:tree
+                  show_state: true
+                  show_if_state_not: low
+                - entity: sensor.kleenex_pollen_radar_home_weeds_level
+                  name: Weeds
+                  icon: mdi:grass
+                  show_state: true
+                  show_if_state_not: low
+                - entity: sensor.kleenex_pollen_radar_home_grass_level
+                  name: Grass
+                  icon: mdi:flower-pollen
+                  show_state: true
+                  show_if_state_not: low
+              card_mod:
+                style: |
+                  .bubble-sub-button-icon {
+                    color: forestgreen !important;
+                  }
+      - type: grid
+        columns: 1
+        header:
+          type: markdown
+          content: ⛅ Forecast
+        cards:
+          - type: horizontal-stack
+            cards:
+              - type: custom:vertical-stack-in-card
+                cards:
+                  - type: custom:simple-weather-card
+                    entity: weather.forecast_home
+                    primary_info:
+                      - precipitation
+                      - humidity
+                    secondary_info:
+                      - wind_speed
+                      - wind_bearing
+                    card_mod:
+                      style: |
+                        ha-card {
+                          font-size: 90%;
+                          padding: 6px;
+                        }
+                        :host(.tablet) ha-card {
+                          font-size: 75%;
+                        }
+                  - type: custom:hourly-weather
+                    entity: weather.forecast_home
+                    show_precipitation_probability: true
+                    show_precipitation_amounts: true
+                    show_date: true
+                    show_wind: true
+                    round_temperatures: true
+                    card_mod:
+                      style: |
+                        ha-card {
+                          padding: 6px;
+                          font-size: 90%;
+                        }
+                        :host(.tablet) ha-card {
+                          font-size: 75%;
+                        }
+                  - type: custom:clock-weather-card
+                    entity: weather.forecast_home
+                    hide_clock: true
+                    animated_icon: true
+                    hide_today_section: true
+                    grid_options:
+                      columns: full
+      - type: grid
+        columns: 4
+        header:
+          type: markdown
+          content: 🌡️ Environment
+        cards:
+          - type: custom:mini-graph-card
+            name: Temp
+            icon: mdi:thermometer
+            entities:
+              - sensor.weather_station_alpha_temp
+            show:
+              extrema: true
+              average: true
+            card_mod:
+              style: |
+                ha-card {
+                  font-size: 85%;
+                  height: 130px;
+                }
+                :host(.tablet) ha-card {
+                  font-size: 65%;
+                  height: 90px;
+                }
+          - type: conditional
+            conditions:
+              - entity: sensor.weather_station_alpha_humidity
+                condition: numeric_state
+                above: 40
+            card:
+              type: custom:mini-graph-card
+              name: Humidity
+              icon: mdi:water-percent
+              entities:
+                - sensor.weather_station_alpha_humidity
+              card_mod:
+                style: |
+                  ha-card {
+                    font-size: 65%;
+                    height: 90px;
+                  }
+          - type: custom:mini-graph-card
+            name: UV
+            icon: mdi:weather-sunny-alert
+            entities:
+              - sensor.weather_station_alpha_uv_index
+            card_mod:
+              style: |
+                ha-card {
+                  font-size: 65%;
+                  height: 90px;
+                }
+          - type: horizontal-stack
+            cards:
+              - type: custom:mini-graph-card
+                name: Humidex
+                entities:
+                  - entity: sensor.thermal_comfort_humidex_perception
+                    name: Humidex
+                    show_state: false
+                hours_to_show: 24
+                points_per_hour: 1
+                font_size: 40
+                aggregate_func: max
+                animate: true
+                smoothing: false
+                show:
+                  labels: false
+                  legend: false
+                  name_adaptive_color: true
+                  icon_adaptive_color: true
+                color_thresholds:
+                  - value: 0
+                    color: '#4caf50'
+                  - value: 1
+                    color: '#cddc39'
+                  - value: 2
+                    color: '#ffeb3b'
+                  - value: 3
+                    color: '#ff9800'
+                  - value: 4
+                    color: '#f44336'
+                  - value: 5
+                    color: '#880e4f'
+                state_map:
+                  - value: comfortable
+                    label: Comfortable
+                  - value: noticable_discomfort
+                    label: Noticeable Discomfort
+                  - value: evident_discomfort
+                    label: Evident Discomfort
+                  - value: great_discomfort
+                    label: Great Discomfort
+                  - value: dangerous_discomfort
+                    label: Dangerous
+                  - value: heat_stroke
+                    label: Heat Stroke
+                card_mod:
+                  style: |
+                    .name {
+                      font-size: 95%;
+                    }
+                    .header {
+                      padding-bottom: 0px;
+                    }
+                    .states {
+                      padding-bottom: 5px;
+                    }
+                    ha-card {
+                      padding-top: 4px !important;
+                    }
+                    .states.flex {
+                      font-weight: bold;
+                    }
+              - type: custom:mini-graph-card
+                name: Dew Point
+                entities:
+                  - entity: sensor.thermal_comfort_dew_point_perception
+                    name: Dew Point
+                    name_adaptive_color: true
+                hours_to_show: 24
+                points_per_hour: 1
+                font_size: 40
+                aggregate_func: max
+                animate: true
+                smoothing: false
+                show:
+                  labels: false
+                  legend: false
+                  name_adaptive_color: true
+                  icon_adaptive_color: true
+                color_thresholds:
+                  - value: 0
+                    color: '#b3e5fc'
+                  - value: 1
+                    color: '#81d4fa'
+                  - value: 2
+                    color: '#4caf50'
+                  - value: 3
+                    color: '#cddc39'
+                  - value: 4
+                    color: '#ffeb3b'
+                  - value: 5
+                    color: '#ff9800'
+                  - value: 6
+                    color: '#f44336'
+                  - value: 7
+                    color: '#880e4f'
+                state_map:
+                  - value: dry
+                    label: Dry
+                  - value: very_comfortable
+                    label: Very Comfortable
+                  - value: comfortable
+                    label: Comfortable
+                  - value: ok_but_humid
+                    label: Ok But Humid
+                  - value: somewhat_uncomfortable
+                    label: Somewhat Uncomfortable
+                  - value: quite_uncomfortable
+                    label: Quite Uncomfortable
+                  - value: extremely_uncomfortable
+                    label: Extremely Uncomfortable
+                  - value: severely_high
+                    label: Severely High
+                card_mod:
+                  style: |
+                    .name {
+                      font-size: 95%;
+                    }
+                    .header {
+                      padding-bottom: 0px;
+                    }
+                    .states {
+                      padding-bottom: 5px;
+                    }
+                    ha-card {
+                      padding-top: 4px !important;
+                    }
+                    .states.flex {
+                      font-weight: bold;
+                    }
+      - type: grid
+        columns: 4
+        header:
+          type: markdown
+          content: 💨 Wind Data
+        cards:
+          - type: custom:mini-graph-card
+            name: Wind
+            icon: mdi:weather-windy
+            entities:
+              - sensor.weather_station_alpha_wind_speed
+              - sensor.weather_station_alpha_wind_gust
+              - entity: sensor.nightstate
+                color: rgba(128,128,128,0.3)
+                show_line: false
+                y_axis: secondary
+            show:
+              icon: true
+              state: true
+              fill: fade
+            card_mod:
+              style: |
+                ha-card {
+                  font-size: 65%;
+                  height: 90px;
+                }
+      - type: grid
+        columns: 4
+        header:
+          type: markdown
+          content: ⚡ Lightning
+        cards:
+          - type: custom:mini-graph-card
+            name: Lightning Count
+            icon: mdi:lightning-bolt
+            entities:
+              - sensor.blitzortung_lightning_detector_lightning_counter
+            hours_to_show: 24
+            points_per_hour: 1
+            show:
+              extrema: true
+              average: true
+            card_mod:
+              style: |
+                ha-card {
+                  font-size: 85%;
+                  height: 130px;
+                }
+          - type: custom:mini-graph-card
+            name: Distance
+            icon: mdi:map-marker-distance
+            entities:
+              - sensor.blitzortung_lightning_detector_lightning_distance
+            hours_to_show: 24
+            points_per_hour: 1
+            show:
+              extrema: true
+              average: true
+            card_mod:
+              style: |
+                ha-card {
+                  font-size: 85%;
+                  height: 130px;
+                }
+          - type: custom:entity-card
+            entity: sensor.blitzortung_lightning_detector_lightning_azimuth
+            name: Azimuth
+            icon: mdi:compass-outline
+            card_mod:
+              style: |
+                ha-card {
+                  font-size: 85%;
+                  height: 130px;
+                }
