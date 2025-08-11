@@ -1,0 +1,86 @@
+views:
+  - title: Home
+    cards:
+      - type: custom:rain-gauge-card
+        entity: sensor.weather_station_alpha_daily_rain
+        name: Daily Rain
+        hourly_rate_entity: sensor.weather_station_alpha_hourly_rain_rate
+        is_imperial: true
+        max_level: '3'
+      - show_current: true
+        show_forecast: true
+        type: weather-forecast
+        entity: weather.forecast_home
+        name: Weather
+      - type: gauge
+        entity: sensor.weather_station_alpha_temp
+        name: Outside Temp
+        severity:
+          green: 0
+          yellow: 80
+          red: 90
+      - type: history-graph
+        entities:
+          - entity: sensor.weather_station_alpha_temp
+        title: Week Outside temps
+        hours_to_show: 168
+      - type: entities
+        entities:
+          - entity: sensor.blitzortung_lightning_detector_lightning_azimuth
+          - entity: sensor.blitzortung_lightning_detector_lightning_counter
+          - entity: sensor.blitzortung_lightning_detector_lightning_distance
+            secondary_info: last-changed
+        title: Lightning Detector
+      - type: gauge
+        entity: sensor.weather_station_alpha_solar_rad_lx
+        unit: lux
+        max: 105000
+      - type: gauge
+        entity: sensor.weather_station_alpha_event_rain
+      - type: custom:windrose-card
+        title: Wind direction
+        data_period:
+          hours_to_show: 24
+        max_width: 400
+        refresh_interval: 300
+        windspeed_bar_location: right
+        windspeed_bar_full: false
+        wind_direction_entity:
+          entity: sensor.weather_station_alpha_wind_dir
+          direction_unit: degrees
+          use_statistics: false
+          direction_compensation: 0
+        windspeed_entities:
+          - entity: sensor.weather_station_alpha_wind_speed
+            name: ''
+            speed_unit: auto
+            use_statistics: false
+        output_speed_unit: mph
+        speed_range_beaufort: true
+        windrose_draw_north_offset: 0
+        cardinal_direction_letters: NESW
+        matching_strategy: direction-first
+        center_calm_percentage: true
+      - type: gauge
+        entity: sensor.weather_station_alpha_wind_speed
+        name: Wind Speed
+      - type: history-graph
+        entities:
+          - entity: sensor.weather_station_alpha_wind_speed
+          - entity: sensor.weather_station_alpha_wind_gust
+        title: Wind Speed and gust
+        hours_to_show: 24
+      - type: history-graph
+        entities:
+          - entity: sensor.weather_station_alpha_weekly_rain
+        title: Weekly Rain
+        hours_to_show: 168
+      - type: gauge
+        entity: sensor.weather_station_alpha_hourly_rain_rate
+        max: 4
+      - type: history-graph
+        entities:
+          - sensor.weather_station_alpha_wind_speed
+          - sensor.weather_station_alpha_wind_gust
+        hours_to_show: 1
+        title: Wind Speed and gust 1hr
