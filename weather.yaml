@@ -309,28 +309,49 @@ views:
                   font-size: 65%;
                   height: 90px;
                 }
+          - type: custom:compass-card
+            indicator_sensors:
+              - sensor: sensor.weather_station_alpha_wind_dir
+                compass:
+                  north: 'N'
+                  east: E
+                  south: S
+                  west: W
+                indicator:
+                  show: true
+                  type: arrow_inward
+            value_sensors:
+              - sensor: sensor.weather_station_alpha_wind_speed
+            header:
+              title:
+                value: Wind Direction
       - type: grid
         columns: 4
         header:
           type: markdown
           content: ⚡ Lightning
         cards:
-          - type: custom:mini-graph-card
-            name: Lightning Count
-            icon: mdi:lightning-bolt
-            entities:
-              - sensor.blitzortung_lightning_detector_lightning_counter
-            hours_to_show: 24
-            points_per_hour: 1
-            show:
-              extrema: true
-              average: true
-            card_mod:
-              style: |
-                ha-card {
-                  font-size: 85%;
-                  height: 130px;
-                }
+          - type: conditional
+            conditions:
+              - entity: sensor.blitzortung_lightning_detector_lightning_counter
+                state_not: '0'
+            card:
+              type: custom:mini-graph-card
+              name: Lightning Count
+              icon: mdi:lightning-bolt
+              entities:
+                - sensor.blitzortung_lightning_detector_lightning_counter
+              hours_to_show: 24
+              points_per_hour: 1
+              show:
+                extrema: true
+                average: true
+              card_mod:
+                style: |
+                  ha-card {
+                    font-size: 85%;
+                    height: 130px;
+                  }
           - type: conditional
             conditions:
               - entity: sensor.blitzortung_lightning_detector_last_strike_age
@@ -360,17 +381,22 @@ views:
                       border-color: #9e9e9e; /* gray for older */
                     {% endif %}
                   }
-          - type: markdown
-            content: |
-              **Strike Age Legend**
-              - 🔴 <15 min  
-              - 🟠 <30 min  
-              - 🟢 <4 hours  
-              - ⚪ Older
-            card_mod:
-              style: |
-                ha-card {
-                  font-size: 85%;
-                  height: 130px;
-                  padding: 8px;
-                }
+          - type: conditional
+            conditions:
+              - entity: sensor.blitzortung_lightning_detector_last_strike_age
+                state_not: unknown
+            card:
+              type: markdown
+              content: |
+                **Strike Age Legend**
+                - 🔴 <15 min  
+                - 🟠 <30 min  
+                - 🟢 <4 hours  
+                - ⚪ Older
+              card_mod:
+                style: |
+                  ha-card {
+                    font-size: 85%;
+                    height: 130px;
+                    padding: 8px;
+                  }
